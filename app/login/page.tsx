@@ -12,7 +12,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
-  const dispatch = useDispatch(); // Redux dispatch
+  const dispatch = useDispatch();
 
   const handleLogin = async () => {
     try {
@@ -24,10 +24,8 @@ const Login = () => {
         const userDoc = await getDoc(doc(db, 'users', user.uid));
         const role = userDoc.data()?.role;
 
-        // Dispatch to Redux store
         dispatch(loginSuccess({ user: { uid: user.uid, email: user.email }, role }));
 
-        // Redirect based on role
         if (role === 'admin') {
           router.push('/dashboard');
         } else if (role === 'manager') {
@@ -38,33 +36,52 @@ const Login = () => {
       } else {
         setError('Failed to retrieve user ID.');
       }
-
     } catch (err) {
       setError('Failed to log in. Please check your credentials.');
     }
   };
 
+  const handleContinueAsViewer = () => {
+    // Redirect to viewer-dashboard directly
+    router.push('/viewer-dashboard');
+  };
+
   return (
-    <div className="p-4">
-      <h2 className="text-2xl">Login</h2>
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-        className="border p-2 mb-4 w-full"
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-        className="border p-2 mb-4 w-full"
-      />
-      <button onClick={handleLogin} className="bg-blue-500 text-white p-2 w-full">
-        Login
-      </button>
-      {error && <p className="text-red-500">{error}</p>}
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="bg-white shadow-md rounded-lg p-8 w-96">
+        <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+          className="border border-gray-300 p-2 mb-4 w-full rounded"
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+          className="border border-gray-300 p-2 mb-4 w-full rounded"
+        />
+        <button
+          onClick={handleLogin}
+          className="bg-green-500 text-white p-2 w-full rounded hover:bg-green-600 transition"
+        >
+          Login
+        </button>
+        {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+
+        {/* Continue as Viewer link */}
+        <div className="text-center mt-4">
+          <button
+            onClick={handleContinueAsViewer}
+            className="text-blue-500 hover:underline"
+          >
+            Continue as a Viewer
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

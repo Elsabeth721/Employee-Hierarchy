@@ -1,15 +1,20 @@
-// app/page.tsx
-import React from 'react';
+"use client";
+import { AboutUs } from "./Components/Aboutus";
+import { ContactUs } from "./Components/Contactus";
+import HeroImageRight from "./Components/Hero";
 
-const Home: React.FC = () => {
+export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-      <h1 className="text-3xl font-bold">Welcome to Perago Information System!</h1>
-      <a href="/positions">
-        <button className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Manage Positions</button>
-      </a>
-    </div>
-  );
-};
+    <main>
+      <HeroImageRight />
+      
+      <div id="about">
+        <AboutUs />
+      </div>
 
-export default Home; // Ensure this is the default export
+      <div id="contact">
+        <ContactUs />
+      </div>
+    </main>
+  );
+}

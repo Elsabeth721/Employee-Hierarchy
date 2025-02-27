@@ -1,0 +1,120 @@
+
+/* Overall Background */
+.wrapper {
+    min-height: 450px;
+    background-color: #d3f9d8; /* Light Green */
+    border-radius: var(--mantine-radius-md);
+    padding: calc(var(--mantine-spacing-xl) * 2.5);
+   margin: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    @media (max-width: 768px) {
+      padding: calc(var(--mantine-spacing-xl) * 1.5);
+    }
+  }
+  
+  /* Title */
+  .title {
+    font-family:
+      Greycliff CF,
+      var(--mantine-font-family);
+    color: var(--mantine-color-green-9);
+    line-height: 1.2;
+    font-size: 2rem;
+    font-weight: 700;
+  }
+  
+  /* Description */
+  .description {
+    color: var(--mantine-color-green-9);
+    max-width: 350px;
+    font-size: 1rem;
+    line-height: 1.5;
+  
+    @media (max-width: 768px) {
+      max-width: 100%;
+      text-align: center;
+    }
+  }
+  
+  /* Form Container */
+  .form {
+    background-color: var(--mantine-color-white); /* White Form Background */
+    padding: var(--mantine-spacing-xl);
+    border-radius: var(--mantine-radius-md);
+    box-shadow: var(--mantine-shadow-lg);
+    max-width: 500px;
+    width: 100%;
+  }
+  
+  /* Social Media Icons */
+  .social {
+    display: flex;
+    gap: 12px;
+    color: var(--mantine-color-green-9);
+    margin-top: 10px;
+  }
+  
+  .social:hover {
+    color: var(--mantine-color-green-7);
+    transform: scale(1.1);
+    transition: all 0.2s ease-in-out;
+  }
+  
+  /* Contact Information */
+  .contact-info {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--mantine-color-green-8);
+    font-size: 1rem;
+  }
+  
+  /* Input Fields */
+  .input {
+    background-color: var(--mantine-color-white); /* White Input Fields */
+    border-color: var(--mantine-color-green-4);
+    color: var(--mantine-color-black);
+    font-size: 1rem;
+    padding: 10px;
+    border-radius: var(--mantine-radius-sm);
+  }
+  
+  .input::placeholder {
+    color: var(--mantine-color-gray-5);
+  }
+  
+  /* Input Label */
+  .inputLabel {
+    color: var(--mantine-color-black);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  
+  /* Submit Button */
+  .control {
+    background-color: var(--mantine-color-green-6);
+    color: var(--mantine-color-white);
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 12px 20px;
+    border-radius: var(--mantine-radius-sm);
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  .control:hover {
+    background-color: var(--mantine-color-green-5);
+  }
+  .outer {
+    padding: 100px; 
+    background-color: var(--mantine-color-gray-1);
+  }

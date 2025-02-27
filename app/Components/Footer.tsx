@@ -9,19 +9,18 @@ import Image from "next/image";
 import classes from "./FooterCentered.module.css";
 
 const links = [
-  { link: "#", label: "Home" },
-  { link: "#", label: "About" },
-  { link: "#", label: "Contact" },
-  { link: "#", label: "Login" },
+  // { link: "#", label: "Home" },
+  // { link: "#", label: "About" },
+  // { link: "#", label: "Contact" },
+  { link: "#", label: "All right reserved @2025." },
 ];
 
 export function FooterCentered() {
   const items = links.map((link) => (
     <Anchor
-      c="dimmed"
+      className={classes.links} // Ensure this class is applied to the Anchor
       key={link.label}
       href={link.link}
-      lh={1}
       onClick={(event) => event.preventDefault()}
       size="sm"
     >
@@ -33,13 +32,13 @@ export function FooterCentered() {
     <div className={classes.footer}>
       <div className={classes.inner}>
       <Image
-          src="/perago.png"
+          src="/perago-white.webp"
           alt="Perago Logo"
           width={150}
           height={150}
           priority
         />{" "}
-        <Group className={classes.links}>{items}</Group>
+        <Group className={classes.links} color="white">{items}</Group>
       
         <Group gap="xs" justify="flex-end" wrap="nowrap">
           <ActionIcon size="lg" variant="default" radius="xl">

@@ -1,7 +1,9 @@
+
+
 .footer {
-    margin-top: 120px;
+    
     border-top: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
-    background:green;
+    background:var(--mantine-color-green-6);
   }
   
   .inner {
@@ -16,8 +18,13 @@
   }
   
   .links {
+    color: var(--mantine-color-white);
     @media (max-width: 768px) {
       margin-top: var(--mantine-spacing-lg);
       margin-bottom: var(--mantine-spacing-sm);
     }
   }
+
+  
+  
+  

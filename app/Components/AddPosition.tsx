@@ -80,7 +80,7 @@ const AddPosition = () => {
       </select>
       <button
         onClick={handleAddPosition}
-        className="bg-blue-500 text-white p-2 w-full"
+        className="bg-green-500 text-white p-2 w-full"
         disabled={loading}
       >
         {loading ? "Adding..." : "Add Position"}
