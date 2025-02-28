@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import Sidebar from "../Components/Sidebar";
 import AddPosition from "../Components/AddPosition";
 import ViewPositions from "../Components/ViewPosition";
-import UpdatePosition from "../Components/UpdatePosition";
+// import UpdatePosition from "../Components/UpdatePosition";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -25,8 +25,8 @@ export default function Dashboard() {
     <div className="flex h-screen">
       <Sidebar role={role} setPage={setPage} />
       <main className="flex-1 p-5 bg-gray-100">
-        <h1 className="text-3xl font-semibold mb-8 text-center text-gray-800">
-          Welcome to the Dashboard - {role.toUpperCase()}
+        <h1 className=" text-2xl font-semibold mb-8 text-center text-gray-800">
+          Welcome to the Dashboard - {role.toLocaleUpperCase()}
         </h1>
 
         {page === "home" && (
@@ -52,7 +52,7 @@ export default function Dashboard() {
 
         {page === "add" && <AddPosition />}
         {page === "view" && <ViewPositions />}
-        {page === "update" && <UpdatePosition />}
+        {/* {page === "update" && <UpdatePosition />} */}
       </main>
     </div>
   );

@@ -8,7 +8,7 @@ const AddPosition = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [parentId, setParentId] = useState("");
-  const [positions, setPositions] = useState<{ id: string; name?: string; description?: string; parentId?: string }[]>([]); // Available positions
+  const [positions, setPositions] = useState<{ id: string; name?: string; description?: string; parentId?: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -36,7 +36,7 @@ const AddPosition = () => {
       await addDoc(collection(db, "positions"), {
         name,
         description,
-        parentId: parentId || null, // Null if root position
+        parentId: parentId || null, 
         createdAt: serverTimestamp(),
       });
 
@@ -51,41 +51,43 @@ const AddPosition = () => {
   };
 
   return (
-    <div className="p-4 border rounded-lg shadow-md bg-white">
-      <h2 className="text-lg font-bold mb-2">Add New Position</h2>
-      <input
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Position Name"
-        className="border p-2 mb-2 w-full"
-      />
-      <textarea
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        placeholder="Description (optional)"
-        className="border p-2 mb-2 w-full"
-      />
-      <select
-        value={parentId}
-        onChange={(e) => setParentId(e.target.value)}
-        className="border p-2 mb-2 w-full"
-      >
-        <option value="">No Parent (Top-level Position)</option>
-        {positions.map((pos) => (
-          <option key={pos.id} value={pos.id}>
-            {pos.name}
-          </option>
-        ))}
-      </select>
-      <button
-        onClick={handleAddPosition}
-        className="bg-green-500 text-white p-2 w-full"
-        disabled={loading}
-      >
-        {loading ? "Adding..." : "Add Position"}
-      </button>
-      {message && <p className="text-red-500 mt-2">{message}</p>}
+    <div className="flex justify-center m-10">
+      <div className="m-10 p-10 border rounded-lg shadow-md bg-white max-w-sm w-full">
+        <h2 className="text-lg font-bold mb-2 text-center">Add New Position</h2>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Position Name"
+          className="border p-1 mb-3 w-full rounded"
+        />
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Description (optional)"
+          className="border p-1 mb-3 w-full rounded"
+        />
+        <select
+          value={parentId}
+          onChange={(e) => setParentId(e.target.value)}
+          className="border p-1 mb-3 w-full rounded"
+        >
+          <option value="">No Parent (Top-level Position)</option>
+          {positions.map((pos) => (
+            <option key={pos.id} value={pos.id}>
+              {pos.name}
+            </option>
+          ))}
+        </select>
+        <button
+          onClick={handleAddPosition}
+          className="bg-green-500 text-white p-1 w-full rounded hover:bg-green-600 transition ease-in"
+          disabled={loading}
+        >
+          {loading ? "Adding..." : "Add Position"}
+        </button>
+        {message && <p className="text-green-500 mt-2 text-center">{message}</p>}
+      </div>
     </div>
   );
 };

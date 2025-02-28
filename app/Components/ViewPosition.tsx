@@ -1,31 +1,33 @@
+'use client'
 import { IconChevronDown } from "@tabler/icons-react";
 import { Group, Tree, TreeNodeData } from "@mantine/core";
 import { useEffect, useState } from "react";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { db } from "../firebaseConfig";
+
 interface Position {
   id: string;
   name: string;
   description: string;
-  parentId: string;
+  parentId: string | null;
   createdAt: Date;
 }
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
-import { db } from "../firebaseConfig";
 
 const ViewPositions = () => {
   const [positions, setPositions] = useState<Position[]>([]);
   const [loading, setLoading] = useState(true);
 
   const buildHierarchy = (items: Position[], parentId: string | null = null): TreeNodeData[] => {
-    return items
-      .filter((item) => item.parentId === parentId || (parentId === null && item.parentId === ""))
-      .map((item) => ({
-        label: item.name,
-        value: item.id,
-        children: buildHierarchy(items, item.id),
-      }));
+    console.log("Building hierarchy for parentId:", parentId); 
+    const filteredItems = items.filter((item) => item.parentId === parentId);
+    console.log("Filtered Items:", filteredItems); 
+
+    return filteredItems.map((item) => ({
+      label: item.name,
+      value: item.id,
+      children: buildHierarchy(items, item.id),
+    }));
   };
-  
-  
 
   useEffect(() => {
     const fetchPositions = async () => {
@@ -38,26 +40,28 @@ const ViewPositions = () => {
             id: doc.id,
             name: data.name,
             description: data.description,
-            parentId: data.parentId,
+            parentId: data.parentId || null, 
             createdAt: data.createdAt?.toDate(),
           };
         });
-  
-        console.log("Fetched positions:", positionsArray);  // Add this to check the data
+
+        console.log("Fetched positions:", positionsArray); 
         setPositions(positionsArray);
       } catch (error) {
         console.error("Error fetching positions:", error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
-  
+
     fetchPositions();
   }, []);
-  
 
   if (loading) return <p>Loading positions...</p>;
 
   const hierarchy = buildHierarchy(positions);
+  console.log("Positions before building hierarchy:", positions); 
+  console.log("Hierarchy structure:", hierarchy); 
 
   return (
     <div className="p-8 bg-gray-50">
