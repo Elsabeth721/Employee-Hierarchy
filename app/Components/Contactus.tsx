@@ -24,14 +24,12 @@ export function ContactUs() {
     <div className={classes.outer}>
     <div className={classes.wrapper}>
       <SimpleGrid cols={{ base: 1, sm: 2 }} spacing={50}>
-        {/* Left Side - Contact Info */}
         <div>
           <Title className={classes.title}>Contact Us</Title>
           <Text className={classes.description} mt="sm" mb={30}>
             Leave your email, and we will get back to you within 24 hours.
           </Text>
 
-          {/* Contact Information */}
           <Group align="center" mt="md">
             <IconMapPin size={24} stroke={1.5} />
             <Text>Addis Ababa, Ethiopia, Haile Gebre Silase St.<br /> Noah City Point Building, 4th Floor</Text>
@@ -47,11 +45,9 @@ export function ContactUs() {
             <Text>Info@peragosystems.com</Text>
           </Group>
 
-          {/* Social Icons */}
           <Group mt="xl">{icons}</Group>
         </div>
 
-        {/* Right Side - Contact Form */}
         <div className={classes.form}>
           <TextInput
             label="Email"
@@ -61,7 +57,7 @@ export function ContactUs() {
           />
           <TextInput
             label="Name"
-            placeholder="John Doe"
+            placeholder="Elsa"
             mt="md"
             classNames={{ input: classes.input, label: classes.inputLabel }}
           />

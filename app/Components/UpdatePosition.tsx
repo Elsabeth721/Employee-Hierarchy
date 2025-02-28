@@ -1,142 +1,183 @@
-"use client";
-import { useState, useEffect, SetStateAction } from "react";
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  doc,
-  updateDoc,
-  deleteDoc,
-} from "firebase/firestore";
+import { useState, useEffect } from "react";
+import { collection, getDocs, query, orderBy, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { 
+  IconChevronDown, 
+  IconEdit, 
+  IconTrash, 
+  IconDotsVertical, 
+  IconCheck, 
+  IconX 
+} from "@tabler/icons-react";
+import { Group, Tree, TextInput, Button, TreeNodeData } from "@mantine/core";
+import { db } from "../firebaseConfig";
 
-const db = getFirestore();
-
-// Fetch all positions
-async function fetchPositions() {
-  const querySnapshot = await getDocs(collection(db, "positions"));
-  return querySnapshot.docs.map((doc) => {
-    const data = doc.data();
-    return { id: doc.id, name: data.name, description: data.description, parentId: data.parentId };
-  });
-}
-
-// PositionTree Component
-export default function PositionTree() {
-  const [positions, setPositions] = useState<{ id: string; name: string; description: string; parentId: string | null; }[]>([]);
-  const [editingId, setEditingId] = useState<string | null>(null); // ID of position being edited
-  const [formData, setFormData] = useState<{ name: string; description: string; parentId: string | null }>({ name: "", description: "", parentId: null });
-
-  useEffect(() => {
-    fetchPositions().then(setPositions);
-  }, []);
-
-  // Build tree structure
-  function buildTree(data: any[], parentId: string | null = null): any[] {
-    return data
-      .filter((pos) => pos.parentId === parentId)
-      .map((pos) => ({
-        ...pos,
-        children: buildTree(data, pos.id),
-      }));
-  }
-
-  const positionTree = buildTree(positions);
-
-  // Handle Edit Click
-  function handleEdit(position: Position) {
-    setEditingId(position.id);
-    setFormData({ name: position.name, description: position.description, parentId: position.parentId });
-  }
-
-  // Handle Save (Update Firestore)
-  async function handleSave() {
-    if (!editingId) return;
-
-    const positionRef = doc(db, "positions", editingId);
-    await updateDoc(positionRef, formData);
-
-    setEditingId(null);
-    setPositions(await fetchPositions()); // Refresh data
-  }
-
-  // Handle Delete
-  async function handleDelete(id: string) {
-    if (!window.confirm("Are you sure you want to delete this position?")) return;
-
-    await deleteDoc(doc(db, "positions", id));
-
-    setPositions(await fetchPositions()); // Refresh data
-  }
-
-  return (
-    <div>
-      <h2 className="text-lg font-bold">Company Hierarchy</h2>
-      <ul>
-        {positionTree.map((pos) => (
-          <PositionNode key={pos.id} position={pos} onEdit={handleEdit} onDelete={handleDelete} />
-        ))}
-      </ul>
-
-      {/* Edit Form */}
-      {editingId && (
-        <div className="mt-4 p-4 border rounded bg-gray-100">
-          <h3 className="font-bold">Edit Position</h3>
-          <input
-            type="text"
-            className="block w-full p-2 border rounded mb-2"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            placeholder="Position Name"
-          />
-          <input
-            type="text"
-            className="block w-full p-2 border rounded mb-2"
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            placeholder="Description"
-          />
-          <button className="bg-blue-500 text-white px-4 py-2 rounded mr-2" onClick={handleSave}>
-            Save
-          </button>
-          <button className="bg-gray-500 text-white px-4 py-2 rounded" onClick={() => setEditingId(null)}>
-            Cancel
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// PositionNode Component (Recursive)
 interface Position {
   id: string;
   name: string;
   description: string;
-  parentId: string | null;
-  children: Position[];
+  parentId: string;
+  createdAt: Date;
 }
 
-function PositionNode({ position, onEdit, onDelete }: { position: Position; onEdit: (position: Position) => void; onDelete: (id: string) => void }) {
+const UpdatePositions = () => {
+  const [positions, setPositions] = useState<Position[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [expandedNodes, setExpandedNodes] = useState<string[]>([]);
+  const [menuOpen, setMenuOpen] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editData, setEditData] = useState({ name: "", description: "", parentId: "" });
+  const [hoveredNode, setHoveredNode] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPositions = async () => {
+      try {
+        const q = query(collection(db, "positions"), orderBy("createdAt", "desc"));
+        const querySnapshot = await getDocs(q);
+        const positionsArray = querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            name: data.name,
+            description: data.description,
+            parentId: data.parentId,
+            createdAt: data.createdAt?.toDate(),
+          };
+        });
+
+        setPositions(positionsArray);
+        console.log("Positions:", positionsArray);
+      } catch (error) {
+        console.error("Error fetching positions:", error);
+      }
+      setLoading(false);
+    };
+
+    fetchPositions();
+  }, []);
+
+  if (loading) return <p>Loading positions...</p>;
+
+  const toggleExpand = (id: string) => {
+    setExpandedNodes((prev) =>
+      prev.includes(id) ? prev.filter((nodeId) => nodeId !== id) : [...prev, id]
+    );
+  };
+
+  const toggleMenu = (id: string) => {
+    setMenuOpen(menuOpen === id ? null : id);
+  };
+
+  const startEditing = (node: TreeNodeData) => {
+    setEditingId(node.value);
+    setEditData({
+      name: node.label as string,
+      description: (node as any).description || "",
+      parentId: (node as any).parentId || "",
+    });
+  };
+
+  const cancelEditing = () => {
+    setEditingId(null);
+    setEditData({ name: "", description: "", parentId: "" });
+  };
+
+  const saveEdit = async (id: string) => {
+    try {
+      await updateDoc(doc(db, "positions", id), editData);
+      setPositions(positions.map(pos => pos.id === id ? { ...pos, ...editData } : pos));
+      setEditingId(null);
+    } catch (error) {
+      console.error("Error updating position:", error);
+    }
+  };
+
+  const deletePosition = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, "positions", id));
+      setPositions(positions.filter(pos => pos.id !== id));
+      setMenuOpen(null);
+    } catch (error) {
+      console.error("Error deleting position:", error);
+    }
+  };
+
+  const buildHierarchy = (items: Position[], parentId: string | null = null): TreeNodeData[] => {
+    return items
+      .filter((item) => item.parentId === parentId || (!item.parentId && !parentId))
+      .map((item) => ({
+        label: item.name,
+        value: item.id,
+        children: buildHierarchy(items, item.id),
+        description: item.description,
+        parentId: item.parentId,
+      }));
+  };
+
+  const hierarchy = buildHierarchy(positions);
+  console.log("Hierarchy:", hierarchy);
+
   return (
-    <li className="mb-2">
-      <div className="flex justify-between items-center">
-        <span className="font-semibold">{position.name}</span>
-        <div>
-          <button className="bg-green-500 text-white px-2 py-1 rounded mr-2" onClick={() => onEdit(position)}>
-            Edit
-          </button>
-          <button className="bg-red-500 text-white px-2 py-1 rounded" onClick={() => onDelete(position.id)}>
-            Delete
-          </button>
-        </div>
-      </div>
-      {position.children.length > 0 && (
-        <ul className="ml-5">
-          {position.children.map((child) => (
-            <PositionNode key={child.id} position={child} onEdit={onEdit} onDelete={onDelete} />
-          ))}
-        </ul>
-      )}
-    </li>
+    <div className="p-8 bg-gray-50">
+      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Employee Hierarchy</h2>
+
+      <Tree
+  data={hierarchy}
+  levelOffset={23}
+  renderNode={({ node }) => (
+    <div className="flex justify-between items-center w-full relative">
+      <Group className="cursor-pointer" onClick={() => toggleExpand(node.value)}>
+        <span>{node.label}</span>
+      </Group>
+      {editingId === node.value && (
+        <div className="bg-white shadow-md p-4 rounded-lg mt-2 w-full max-w-sm">
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">Edit Position</h3>
+          <TextInput 
+            className="w-full p-2 border-gray-300 rounded-md mb-2"
+            value={editData.name} 
+            onChange={(e) => setEditData(prev => ({ ...prev, name: e.target.value }))} 
+            placeholder="Enter name"
+          />
+          <TextInput 
+            className="w-full p-2 border-gray-300 rounded-md mb-2"
+            value={editData.description} 
+            onChange={(e) => setEditData(prev => ({ ...prev, description: e.target.value }))} 
+            placeholder="Enter description"
+          />
+          <select 
+            className="w-full p-2 border border-gray-300 rounded-md mb-3 bg-white"
+            value={editData.parentId} 
+            onChange={(e) => setEditData(prev => ({ ...prev, parentId: e.target.value }))}
+          >
+            <option value="">No Parent</option>
+            {positions.map((pos) => (
+              <option key={pos.id} value={pos.id}>{pos.name}</option>
+            ))}
+          </select>
+      
+                
+                <div className="flex justify-end">
+                  <Button 
+                    onClick={() => saveEdit(node.value)} 
+                    size="sm" 
+                    className="bg-green-500 text-white hover:bg-green-600 px-4 py-1 rounded-md"
+                  >
+                    <IconCheck size={16} />
+                  </Button>
+                  <Button 
+                    onClick={cancelEditing} 
+                    size="sm" 
+                    className="bg-red-500 text-white hover:bg-red-600 px-4 py-1 rounded-md"
+                  >
+                    <IconX size={16} />
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      />
+    </div>
   );
-}
+};
+
+export default UpdatePositions;

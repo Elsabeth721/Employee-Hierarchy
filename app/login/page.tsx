@@ -27,7 +27,7 @@ const Login = () => {
         dispatch(loginSuccess({ user: { uid: user.uid, email: user.email }, role }));
 
         if (role === 'admin') {
-          router.push('/dashboard');
+          router.push('/admin-dashboard');
         } else if (role === 'manager') {
           router.push('/manager-dashboard');
         } else {
@@ -42,13 +42,12 @@ const Login = () => {
   };
 
   const handleContinueAsViewer = () => {
-    // Redirect to viewer-dashboard directly
     router.push('/viewer-dashboard');
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white shadow-md rounded-lg p-8 w-96">
+    <div className="flex items-center justify-center  bg-gray-100">
+      <div className="m-10 bg-white shadow-md rounded-lg p-8 w-96">
         <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
         <input
           type="email"
@@ -72,11 +71,10 @@ const Login = () => {
         </button>
         {error && <p className="text-red-500 text-center mt-4">{error}</p>}
 
-        {/* Continue as Viewer link */}
         <div className="text-center mt-4">
           <button
             onClick={handleContinueAsViewer}
-            className="text-blue-500 hover:underline"
+            className="text-gray-500 hover:underline hover:text-blue-500"
           >
             Continue as a Viewer
           </button>

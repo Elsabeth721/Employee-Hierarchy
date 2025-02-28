@@ -11,7 +11,7 @@ import { usePathname } from "next/navigation";
 
 function RootLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const hideLayout = pathname.startsWith("/dashboard");
+  const hideLayout = pathname.startsWith("/admin-dashboard");
 
   return (
     <html lang="en" {...mantineHtmlProps}>
