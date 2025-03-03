@@ -31,7 +31,7 @@ export default function Dashboard() {
 
         {page === "home" && (
           <div className="flex flex-col items-center justify-center bg-gradient-to-r from-gray-400 to-gray-500 text-white p-8 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold mb-4">Hello, {role.toUpperCase()}!</h2>
+            <h2 className="text-2xl font-bold mb-4">Hello, {role}!</h2>
             <p className="text-lg mb-6">Here, you can manage your company's positions and other details.</p>
             <div className="flex space-x-8">
               <button
